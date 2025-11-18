@@ -2,14 +2,13 @@ package com.example.devices.controller;
 
 import com.example.devices.model.CreateDeviceRequest;
 import com.example.devices.model.Device;
+import com.example.devices.model.UpdateDeviceRequest;
 import com.example.devices.service.DeviceManagementService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
@@ -19,7 +18,11 @@ public class DeviceController {
     private final ModelMapper modelMapper;
 
     @PostMapping
-    public ResponseEntity<Device> createDevice(@RequestBody CreateDeviceRequest device) {
-        return ResponseEntity.ok(deviceManagementService.createDevice(modelMapper.map(device, Device.class)));
+    public ResponseEntity<Device> createDevice(@RequestBody CreateDeviceRequest createRequest) {
+        return ResponseEntity.ok(deviceManagementService.createDevice(modelMapper.map(createRequest, Device.class)));
+    }
+    @PutMapping
+    public ResponseEntity<Device> updateDevice(@Valid @RequestBody UpdateDeviceRequest updateRequest) {
+        return ResponseEntity.ok(deviceManagementService.updateDevice(modelMapper.map(updateRequest, Device.class)));
     }
 }

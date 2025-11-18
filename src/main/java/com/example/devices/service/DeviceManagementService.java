@@ -4,8 +4,10 @@ import com.example.devices.model.CreateDeviceRequest;
 import com.example.devices.model.Device;
 import com.example.devices.repository.DeviceEntity;
 import com.example.devices.repository.DeviceRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,6 +19,21 @@ public class DeviceManagementService {
     public Device createDevice(Device device) {
         var mappedEntity = modelMapper.map(device, DeviceEntity.class);
         var savedEntity = deviceRepository.save(mappedEntity);
+        return modelMapper.map(savedEntity, Device.class);
+    }
+
+    public Device updateDevice(Device device) {
+        var deviceToUpdate = deviceRepository.findById(device.getId()).orElseThrow(() -> new EntityNotFoundException("Device not found"));
+        if (device.getName() != null) {
+            deviceToUpdate.setName(device.getName());
+        }
+        if (device.getBrand() != null) {
+            deviceToUpdate.setBrand(device.getBrand());
+        }
+        if (device.getState() != null) {
+            deviceToUpdate.setState(device.getState());
+        }
+        var savedEntity = deviceRepository.save(deviceToUpdate);
         return modelMapper.map(savedEntity, Device.class);
     }
 }

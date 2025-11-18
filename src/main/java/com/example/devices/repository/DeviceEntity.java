@@ -13,6 +13,7 @@ import java.time.Instant;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "device")
 public class DeviceEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
