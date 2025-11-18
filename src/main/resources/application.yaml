@@ -1,3 +1,14 @@
 spring:
   application:
     name: devices-api
+
+  datasource:
+    url: ${DB_HOST:jdbc:postgresql://localhost:5432/device_db}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+
+  jpa:
+    hibernate:
+#      TODO change after proper containerization
+      ddl-auto: create-drop
+    show-sql: true
