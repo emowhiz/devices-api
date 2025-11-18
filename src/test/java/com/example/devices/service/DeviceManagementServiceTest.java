@@ -5,6 +5,7 @@ import com.example.devices.model.Device;
 import com.example.devices.model.DeviceState;
 import com.example.devices.repository.DeviceEntity;
 import com.example.devices.repository.DeviceRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,9 +16,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.Instant;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -55,6 +56,19 @@ class DeviceManagementServiceTest {
         assertEquals(savedEntity.getBrand(), actualResponse.getBrand());
         assertEquals(savedEntity.getState(), actualResponse.getState());
         assertEquals(savedEntity.getCreatedAt(), actualResponse.getCreatedAt());
+    }
+
+    @Test
+    void shouldThrowAnExceptionOnNonExistingDevice() {
+        var request = Device.builder()
+                .id(1L)
+                .name("New Device Name")
+                .build();
+
+        when(deviceRepository.findById(any())).thenReturn(Optional.empty());
+
+
+        assertThrows(EntityNotFoundException.class, () -> deviceManagementService.updateDevice(request));
     }
 
 }
