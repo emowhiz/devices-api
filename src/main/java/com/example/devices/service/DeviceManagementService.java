@@ -36,4 +36,9 @@ public class DeviceManagementService {
         var savedEntity = deviceRepository.save(deviceToUpdate);
         return modelMapper.map(savedEntity, Device.class);
     }
+
+    public Device getDevice(Long id) {
+        var foundEntity = deviceRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Device not found"));
+        return modelMapper.map(foundEntity, Device.class);
+    }
 }

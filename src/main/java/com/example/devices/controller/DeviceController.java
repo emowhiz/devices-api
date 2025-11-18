@@ -25,4 +25,8 @@ public class DeviceController {
     public ResponseEntity<Device> updateDevice(@Valid @RequestBody UpdateDeviceRequest updateRequest) {
         return ResponseEntity.ok(deviceManagementService.updateDevice(modelMapper.map(updateRequest, Device.class)));
     }
+    @GetMapping
+    public ResponseEntity<Device> getDevice(@PathVariable Long id) {
+        return ResponseEntity.ok(deviceManagementService.getDevice(id));
+    }
 }

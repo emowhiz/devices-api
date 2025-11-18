@@ -59,7 +59,7 @@ class DeviceManagementServiceTest {
     }
 
     @Test
-    void shouldThrowAnExceptionOnNonExistingDevice() {
+    void shouldThrowAnExceptionOnNonExistingDeviceOnUpdate() {
         var request = Device.builder()
                 .id(1L)
                 .name("New Device Name")
@@ -69,6 +69,36 @@ class DeviceManagementServiceTest {
 
 
         assertThrows(EntityNotFoundException.class, () -> deviceManagementService.updateDevice(request));
+    }
+
+    @Test
+    void shouldThrowAnExceptionOnNonExistingDeviceOnFetch() {
+        when(deviceRepository.findById(any())).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> deviceManagementService.getDevice(1L));
+    }
+
+
+
+    @Test
+    void shouldReturnFoundDevice() {
+        var existing = DeviceEntity.builder()
+                .id(1L)
+                .name("Test Device")
+                .brand("Test Brand")
+                .state(DeviceState.AVAILABLE)
+                .createdAt(Instant.now())
+                .build();
+        when(deviceRepository.findById(any())).thenReturn(Optional.of(existing));
+
+        var actualResponse = deviceManagementService.getDevice(1L);
+
+        assertNotNull(actualResponse);
+        assertEquals(existing.getName(), actualResponse.getName());
+        assertEquals(existing.getId(), actualResponse.getId());
+        assertEquals(existing.getBrand(), actualResponse.getBrand());
+        assertEquals(existing.getState(), actualResponse.getState());
+        assertEquals(existing.getCreatedAt(), actualResponse.getCreatedAt());
     }
 
 }
