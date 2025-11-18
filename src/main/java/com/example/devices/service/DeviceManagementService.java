@@ -1,14 +1,14 @@
 package com.example.devices.service;
 
-import com.example.devices.model.CreateDeviceRequest;
 import com.example.devices.model.Device;
 import com.example.devices.repository.DeviceEntity;
 import com.example.devices.repository.DeviceRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -37,8 +37,12 @@ public class DeviceManagementService {
         return modelMapper.map(savedEntity, Device.class);
     }
 
-    public Device getDevice(Long id) {
+    public Device fetchDevice(Long id) {
         var foundEntity = deviceRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Device not found"));
         return modelMapper.map(foundEntity, Device.class);
+    }
+    public List<Device> fetchAllDevices() {
+        var existingEntities = deviceRepository.findAll();
+        return existingEntities.stream().map(e -> modelMapper.map(e, Device.class)).toList();
     }
 }

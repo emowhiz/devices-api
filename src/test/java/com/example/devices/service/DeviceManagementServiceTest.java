@@ -75,7 +75,7 @@ class DeviceManagementServiceTest {
     void shouldThrowAnExceptionOnNonExistingDeviceOnFetch() {
         when(deviceRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> deviceManagementService.getDevice(1L));
+        assertThrows(EntityNotFoundException.class, () -> deviceManagementService.fetchDevice(1L));
     }
 
 
@@ -91,7 +91,7 @@ class DeviceManagementServiceTest {
                 .build();
         when(deviceRepository.findById(any())).thenReturn(Optional.of(existing));
 
-        var actualResponse = deviceManagementService.getDevice(1L);
+        var actualResponse = deviceManagementService.fetchDevice(1L);
 
         assertNotNull(actualResponse);
         assertEquals(existing.getName(), actualResponse.getName());

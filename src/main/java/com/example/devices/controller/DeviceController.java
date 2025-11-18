@@ -10,6 +10,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("v1/devices")
@@ -21,12 +23,20 @@ public class DeviceController {
     public ResponseEntity<Device> createDevice(@RequestBody CreateDeviceRequest createRequest) {
         return ResponseEntity.ok(deviceManagementService.createDevice(modelMapper.map(createRequest, Device.class)));
     }
+
     @PutMapping
     public ResponseEntity<Device> updateDevice(@Valid @RequestBody UpdateDeviceRequest updateRequest) {
         return ResponseEntity.ok(deviceManagementService.updateDevice(modelMapper.map(updateRequest, Device.class)));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Device> fetchDevice(@PathVariable Long id) {
+        return ResponseEntity.ok(deviceManagementService.fetchDevice(id));
+    }
+
     @GetMapping
-    public ResponseEntity<Device> getDevice(@PathVariable Long id) {
-        return ResponseEntity.ok(deviceManagementService.getDevice(id));
+    public ResponseEntity<List<Device>> fetchAllDevices() {
+        //TODO paginate
+        return ResponseEntity.ok(deviceManagementService.fetchAllDevices());
     }
 }
