@@ -12,3 +12,9 @@ spring:
 #      TODO change after proper containerization
       ddl-auto: create-drop
     show-sql: true
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html

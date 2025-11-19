@@ -141,5 +141,26 @@ class DeviceControllerTest {
 
     }
 
+    @Test
+    void shouldFetchExistingDevice() {
+        var device = DeviceEntity.builder()
+                .name("Test Device")
+                .brand("Test brand")
+                .state(DeviceState.AVAILABLE)
+                .build();
+
+        var saved = deviceRepository.save(device);
+
+        var response = restTemplate.getForEntity("/v1/devices/"+saved.getId(), Device.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        var responseBody = response.getBody();
+        assertEquals(device.getId(), responseBody.getId());
+        assertEquals(device.getName(), responseBody.getName());
+        assertEquals(device.getName(), responseBody.getName());
+        assertEquals(device.getBrand(), responseBody.getBrand());
+        assertEquals(device.getState(), responseBody.getState());
+    }
+
 
 }
