@@ -8,6 +8,7 @@ import com.example.devices.service.DeviceManagementService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +23,7 @@ public class DeviceController {
 
     @PostMapping
     public ResponseEntity<Device> createDevice(@RequestBody CreateDeviceRequest createRequest) {
-        return ResponseEntity.ok(deviceManagementService.createDevice(modelMapper.map(createRequest, Device.class)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(deviceManagementService.createDevice(modelMapper.map(createRequest, Device.class)));
     }
 
     @PutMapping
