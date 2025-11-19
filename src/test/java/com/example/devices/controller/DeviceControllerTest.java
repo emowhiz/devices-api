@@ -3,6 +3,9 @@ package com.example.devices.controller;
 import com.example.devices.model.CreateDeviceRequest;
 import com.example.devices.model.Device;
 import com.example.devices.model.DeviceState;
+import com.example.devices.model.UpdateDeviceRequest;
+import com.example.devices.repository.DeviceEntity;
+import com.example.devices.repository.DeviceRepository;
 import com.example.devices.service.DeviceManagementService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -30,7 +33,7 @@ class DeviceControllerTest {
 
 
     @Autowired
-    private DeviceManagementService deviceManagementService;
+    private DeviceRepository deviceRepository;
 
     @LocalServerPort
     private Integer port;
@@ -79,4 +82,64 @@ class DeviceControllerTest {
         assertEquals(device.getState(), responseBody.getState());
 
     }
+    @Test
+    void shouldUpdateDevice() {
+        var device = DeviceEntity.builder()
+                .name("Test Device")
+                .brand("Test brand")
+                .state(DeviceState.AVAILABLE)
+                .build();
+
+        var saved = deviceRepository.save(device);
+
+        var updateDeviceRequest = UpdateDeviceRequest.builder()
+                .id(saved.getId())
+                .name("New Name")
+                .brand("New brand")
+                .state(DeviceState.INACTIVE)
+                .build();
+
+        var response = restTemplate.exchange("/v1/devices", HttpMethod.PUT, new HttpEntity<>(updateDeviceRequest), Device.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        var responseBody = response.getBody();
+        assertNotNull(responseBody);
+        assertEquals(updateDeviceRequest.getId(), responseBody.getId());
+        assertEquals(updateDeviceRequest.getName(), responseBody.getName());
+        assertEquals(updateDeviceRequest.getBrand(), responseBody.getBrand());
+        assertEquals(updateDeviceRequest.getState(), responseBody.getState());
+
+    }
+
+
+    @Test
+    void shouldNotUpdateNameAndBrandInUseDevice() {
+        var device = DeviceEntity.builder()
+                .name("Test Device")
+                .brand("Test brand")
+                .state(DeviceState.IN_USE)
+                .build();
+
+        var saved = deviceRepository.save(device);
+
+        var updateDeviceRequest = UpdateDeviceRequest.builder()
+                .id(saved.getId())
+                .name("New Name")
+                .brand("New brand")
+                .state(DeviceState.INACTIVE)
+                .build();
+
+        var response = restTemplate.exchange("/v1/devices", HttpMethod.PUT, new HttpEntity<>(updateDeviceRequest), Device.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        var responseBody = response.getBody();
+        assertNotNull(responseBody);
+        assertEquals(updateDeviceRequest.getId(), responseBody.getId());
+        assertEquals(device.getName(), responseBody.getName());
+        assertEquals(device.getBrand(), responseBody.getBrand());
+        assertEquals(updateDeviceRequest.getState(), responseBody.getState());
+
+    }
+
+
 }
