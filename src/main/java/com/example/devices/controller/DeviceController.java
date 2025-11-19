@@ -39,4 +39,10 @@ public class DeviceController {
         //TODO paginate
         return ResponseEntity.ok(deviceManagementService.fetchAllDevices());
     }
+
+    @GetMapping("/brand/{brand}")
+    public ResponseEntity<List<Device>> fetchAllDevicesByBrand(@PathVariable String brand) {
+        //TODO paginate
+        return ResponseEntity.ok(deviceManagementService.fetchAllDevicesByBrand(brand));
+    }
 }

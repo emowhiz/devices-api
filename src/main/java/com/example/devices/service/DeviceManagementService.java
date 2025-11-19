@@ -45,4 +45,9 @@ public class DeviceManagementService {
         var existingEntities = deviceRepository.findAll();
         return existingEntities.stream().map(e -> modelMapper.map(e, Device.class)).toList();
     }
+
+    public List<Device> fetchAllDevicesByBrand(String brand) {
+        var existingEntities = deviceRepository.findAllByBrand(brand);
+        return existingEntities.stream().map(e -> modelMapper.map(e, Device.class)).toList();
+    }
 }
