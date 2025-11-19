@@ -61,4 +61,12 @@ public class DeviceManagementService {
         var existingEntities = deviceRepository.findAllByState(state);
         return existingEntities.stream().map(e -> modelMapper.map(e, Device.class)).toList();
     }
+
+    public void deleteDevice(Long id) {
+        var existingEntity = deviceRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Device not found"));
+        if (!IN_USE.equals(existingEntity.getState())) {
+            deviceRepository.deleteById(id);
+        }
+        //To do throw custom exception?
+    }
 }

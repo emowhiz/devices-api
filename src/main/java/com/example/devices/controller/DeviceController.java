@@ -52,4 +52,10 @@ public class DeviceController {
         //TODO paginate
         return ResponseEntity.ok(deviceManagementService.fetchAllDevicesByState(state));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteDevice(@PathVariable Long id) {
+        deviceManagementService.deleteDevice(id);
+        return ResponseEntity.ok().build();
+    }
 }
