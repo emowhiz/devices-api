@@ -6,11 +6,7 @@ import com.example.devices.model.DeviceState;
 import com.example.devices.model.UpdateDeviceRequest;
 import com.example.devices.repository.DeviceEntity;
 import com.example.devices.repository.DeviceRepository;
-import com.example.devices.service.DeviceManagementService;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -66,6 +62,10 @@ class DeviceControllerTest {
         restTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory("http://localhost:" + port));
     }
 
+    @AfterEach
+    void tearDown() {
+        deviceRepository.deleteAll();
+    }
     @Test
     void shouldCreateDevice() {
         var device = CreateDeviceRequest.builder()
