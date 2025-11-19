@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,8 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -82,6 +85,7 @@ class DeviceControllerTest {
         assertEquals(device.getState(), responseBody.getState());
 
     }
+
     @Test
     void shouldUpdateDevice() {
         var device = DeviceEntity.builder()
@@ -110,7 +114,6 @@ class DeviceControllerTest {
         assertEquals(updateDeviceRequest.getState(), responseBody.getState());
 
     }
-
 
     @Test
     void shouldNotUpdateNameAndBrandInUseDevice() {
@@ -151,7 +154,7 @@ class DeviceControllerTest {
 
         var saved = deviceRepository.save(device);
 
-        var response = restTemplate.getForEntity("/v1/devices/"+saved.getId(), Device.class);
+        var response = restTemplate.getForEntity("/v1/devices/" + saved.getId(), Device.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         var responseBody = response.getBody();
@@ -160,6 +163,90 @@ class DeviceControllerTest {
         assertEquals(device.getName(), responseBody.getName());
         assertEquals(device.getBrand(), responseBody.getBrand());
         assertEquals(device.getState(), responseBody.getState());
+    }
+
+    @Test
+    void shouldFetchAllDevices() {
+        var device1 = DeviceEntity.builder()
+                .name("Test Device")
+                .brand("Test brand")
+                .state(DeviceState.AVAILABLE)
+                .build();
+        var device2 = DeviceEntity.builder()
+                .name("Test Device 2")
+                .brand("Test brand 2")
+                .state(DeviceState.IN_USE)
+                .build();
+
+        deviceRepository.save(device1);
+        deviceRepository.save(device2);
+
+        var response = restTemplate.exchange("/v1/devices",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Device>>() {
+                });
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        var responseBody = response.getBody();
+        assertNotNull(responseBody);
+        assertEquals(2, responseBody.size());
+    }
+
+    @Test
+    void shouldFetchAllDevicesByBrand() {
+        var device1 = DeviceEntity.builder()
+                .name("Test Device")
+                .brand("Test brand")
+                .state(DeviceState.AVAILABLE)
+                .build();
+        var device2 = DeviceEntity.builder()
+                .name("Test Device 2")
+                .brand("Test brand 2")
+                .state(DeviceState.IN_USE)
+                .build();
+
+        deviceRepository.save(device1);
+        deviceRepository.save(device2);
+
+        var response = restTemplate.exchange("/v1/devices/brand/" + device1.getBrand(),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Device>>() {
+                });
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        var responseBody = response.getBody();
+        assertNotNull(responseBody);
+        assertEquals(1, responseBody.size());
+    }
+
+    @Test
+    void shouldFetchAllDevicesByState() {
+        var device1 = DeviceEntity.builder()
+                .name("Test Device")
+                .brand("Test brand")
+                .state(DeviceState.AVAILABLE)
+                .build();
+        var device2 = DeviceEntity.builder()
+                .name("Test Device 2")
+                .brand("Test brand 2")
+                .state(DeviceState.IN_USE)
+                .build();
+
+        deviceRepository.save(device1);
+        deviceRepository.save(device2);
+
+        var response = restTemplate.exchange("/v1/devices/state/" + device1.getState(),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Device>>() {
+                });
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        var responseBody = response.getBody();
+        assertNotNull(responseBody);
+        assertEquals(1, responseBody.size());
     }
 
 
