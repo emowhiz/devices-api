@@ -2,6 +2,7 @@ package com.example.devices.controller;
 
 import com.example.devices.model.CreateDeviceRequest;
 import com.example.devices.model.Device;
+import com.example.devices.model.DeviceState;
 import com.example.devices.model.UpdateDeviceRequest;
 import com.example.devices.service.DeviceManagementService;
 import jakarta.validation.Valid;
@@ -44,5 +45,11 @@ public class DeviceController {
     public ResponseEntity<List<Device>> fetchAllDevicesByBrand(@PathVariable String brand) {
         //TODO paginate
         return ResponseEntity.ok(deviceManagementService.fetchAllDevicesByBrand(brand));
+    }
+
+    @GetMapping("/state/{state}")
+    public ResponseEntity<List<Device>> fetchAllDevicesByState(@PathVariable DeviceState state) {
+        //TODO paginate
+        return ResponseEntity.ok(deviceManagementService.fetchAllDevicesByState(state));
     }
 }
