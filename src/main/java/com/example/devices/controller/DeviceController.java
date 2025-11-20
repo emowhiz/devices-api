@@ -12,13 +12,13 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
+@Slf4j
 @RestController
 @AllArgsConstructor
 @RequestMapping("v1/devices")
@@ -46,6 +46,7 @@ public class DeviceController {
             )
     })
     public ResponseEntity<Device> createDevice(@Valid @RequestBody CreateDeviceRequest createRequest) {
+        log.info("Received request to create a device with name: [{}] and brand : [{}]", createRequest.getName(), createRequest.getBrand());
         return ResponseEntity.status(HttpStatus.CREATED).body(deviceManagementService.createDevice(modelMapper.map(createRequest, Device.class)));
     }
 
@@ -69,6 +70,7 @@ public class DeviceController {
             )
     })
     public ResponseEntity<Device> updateDevice(@Valid @RequestBody UpdateDeviceRequest updateRequest) {
+        log.info("Received request to update a device with ID: [{}] ", updateRequest.getId());
         return ResponseEntity.ok(deviceManagementService.updateDevice(modelMapper.map(updateRequest, Device.class)));
     }
 
@@ -95,6 +97,7 @@ public class DeviceController {
     )
     @GetMapping("/{id}")
     public ResponseEntity<Device> fetchDevice(@PathVariable Long id) {
+        log.info("Received request to fetch a device with ID: [{}] ", id);
         return ResponseEntity.ok(deviceManagementService.fetchDevice(id));
     }
 
@@ -136,6 +139,7 @@ public class DeviceController {
                                                       @Min(value = 1, message = "Page size must be at least 1")
                                                       @Max(value = 100, message = "Page size must not exceed 100")
                                                       Integer size) {
+        log.info("Received request to fetch all devices with page [{}] and size [{}]", page, size);
         return ResponseEntity.ok(deviceManagementService.fetchAllDevices(page, size));
     }
 
@@ -185,6 +189,7 @@ public class DeviceController {
                                                              @Min(value = 1, message = "Page size must be at least 1")
                                                              @Max(value = 100, message = "Page size must not exceed 100")
                                                              Integer size) {
+        log.info("Received request to fetch all devices with brand [{}] page [{}] and size [{}]", brand, page, size);
         return ResponseEntity.ok(deviceManagementService.fetchAllDevicesByBrand(brand, page, size));
     }
 
@@ -234,6 +239,7 @@ public class DeviceController {
                                                              @Min(value = 1, message = "Page size must be at least 1")
                                                              @Max(value = 100, message = "Page size must not exceed 100")
                                                              Integer size) {
+        log.info("Received request to fetch all devices with state [{}] page [{}] and size [{}]", state, page, size);
         return ResponseEntity.ok(deviceManagementService.fetchAllDevicesByState(state, page, size));
     }
 
@@ -266,6 +272,7 @@ public class DeviceController {
     public ResponseEntity<Void> deleteDevice(@PathVariable
                                              @Min(value = 1, message = "Device ID must be greater than 0")
                                              Long id) {
+        log.info("Received request to delete a device with ID: [{}] ", id);
         deviceManagementService.deleteDevice(id);
         return ResponseEntity.noContent().build();
     }

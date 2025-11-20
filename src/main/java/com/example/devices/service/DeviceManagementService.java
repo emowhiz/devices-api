@@ -30,13 +30,9 @@ public class DeviceManagementService {
 
     public Device updateDevice(Device device) {
         var deviceToUpdate = deviceRepository.findById(device.getId()).orElseThrow(() -> new EntityNotFoundException("Device not found"));
-        //TODO add a custom exception handling?
         if (!IN_USE.equals(deviceToUpdate.getState())) {
-            if (device.getName() != null) {
-                deviceToUpdate.setName(device.getName());
-            }
-            if (device.getBrand() != null) {
-                deviceToUpdate.setBrand(device.getBrand());
+            if (device.getName() != null || device.getState() != null) {
+                throw new DeviceInUseException("Trying to update a device that is in use");
             }
         }
         if (device.getState() != null) {
