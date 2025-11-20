@@ -71,7 +71,7 @@ public class DeviceManagementService {
         if (!IN_USE.equals(existingEntity.getState())) {
             deviceRepository.deleteById(id);
         }
-        //To do throw custom exception?
+        throw new DeviceInUseException("Trying to delete a device is in use");
     }
 
     private DevicePage getDevicePage(Page<DeviceEntity> existingPage) {

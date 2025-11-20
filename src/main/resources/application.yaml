@@ -9,8 +9,7 @@ spring:
 
   jpa:
     hibernate:
-#      TODO change after proper containerization
-      ddl-auto: create-drop
+      ddl-auto: validate
     show-sql: true
 
 springdoc:

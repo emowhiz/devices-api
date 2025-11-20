@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: charge-detail-record-service
+
+  jpa:
+    hibernate:
+      ddl-auto: update
