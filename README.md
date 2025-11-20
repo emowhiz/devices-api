@@ -50,3 +50,4 @@ Device API Service is an application used to manage devices.
 ## Known Issues
 
 1. End points are not secured
+2. Tests can be more comprehensive
