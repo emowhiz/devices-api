@@ -1,6 +1,7 @@
 package com.example.devices.controller;
 
 import com.example.devices.model.ApiErrorResponse;
+import com.example.devices.model.ErrorCode;
 import com.example.devices.service.DeviceInUseException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ApiErrorResponse> handleResourceNotFound(EntityNotFoundException ex) {
         var errorResponse = new ApiErrorResponse(
-                HttpStatus.NOT_FOUND.value(),
+                ErrorCode.ERR_CODE_NOT_FOUND,
                 ex.getMessage(),
                 null,
                 LocalDateTime.now()
@@ -29,7 +30,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DeviceInUseException.class)
     public ResponseEntity<ApiErrorResponse> handleDeviceInUseException(DeviceInUseException ex) {
         var errorResponse = new ApiErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
+                ErrorCode.ERR_CODE_INVALID_REQUEST,
                 ex.getMessage(),
                 null,
                 LocalDateTime.now()
@@ -41,7 +42,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleGlobalException(Exception ex) {
         var errorResponse = new ApiErrorResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                ErrorCode.ERR_CODE_GENERIC_INTERNAL_SRV_ERR,
                 "An unexpected error occurred",
                 null,
                 LocalDateTime.now()

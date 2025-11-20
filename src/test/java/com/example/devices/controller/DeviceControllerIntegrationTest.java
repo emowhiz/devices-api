@@ -126,15 +126,12 @@ class DeviceControllerIntegrationTest {
                 .state(DeviceState.INACTIVE)
                 .build();
 
-        var response = restTemplate.exchange("/v1/devices", HttpMethod.PUT, new HttpEntity<>(updateDeviceRequest), Device.class);
+        var response = restTemplate.exchange("/v1/devices", HttpMethod.PUT, new HttpEntity<>(updateDeviceRequest), ApiErrorResponse.class);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        var responseBody = response.getBody();
-        assertNotNull(responseBody);
-        assertEquals(updateDeviceRequest.getId(), responseBody.getId());
-        assertEquals(device.getName(), responseBody.getName());
-        assertEquals(device.getBrand(), responseBody.getBrand());
-        assertEquals(updateDeviceRequest.getState(), responseBody.getState());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        var body = response.getBody();
+        assertNotNull(body);
+        assertEquals(ErrorCode.ERR_CODE_INVALID_REQUEST, body.getStatusCode());
 
     }
 
@@ -157,6 +154,17 @@ class DeviceControllerIntegrationTest {
         assertEquals(device.getName(), responseBody.getName());
         assertEquals(device.getBrand(), responseBody.getBrand());
         assertEquals(device.getState(), responseBody.getState());
+    }
+
+    @Test
+    void shouldGetNotFoundForNotFoundDevice() {
+
+        var response = restTemplate.getForEntity("/v1/devices/" + 1, ApiErrorResponse.class);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        var responseBody = response.getBody();
+        assertNotNull(responseBody);
+        assertEquals(ErrorCode.ERR_CODE_NOT_FOUND, responseBody.getStatusCode());
     }
 
     @Test
