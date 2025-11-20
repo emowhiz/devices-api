@@ -31,7 +31,7 @@ public class DeviceManagementService {
     public Device updateDevice(Device device) {
         var deviceToUpdate = deviceRepository.findById(device.getId()).orElseThrow(() -> new EntityNotFoundException("Device not found"));
         if (IN_USE.equals(deviceToUpdate.getState())) {
-            if (device.getName() != null || device.getState() != null) {
+            if (device.getName() != null || device.getBrand() != null) {
                 throw new DeviceInUseException("Trying to update a device that is in use");
             }
         }
@@ -72,8 +72,9 @@ public class DeviceManagementService {
         var existingEntity = deviceRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Device not found"));
         if (!IN_USE.equals(existingEntity.getState())) {
             deviceRepository.deleteById(id);
+        }else {
+            throw new DeviceInUseException("Trying to delete a device is in use");
         }
-        throw new DeviceInUseException("Trying to delete a device is in use");
     }
 
     private DevicePage getDevicePage(Page<DeviceEntity> existingPage) {

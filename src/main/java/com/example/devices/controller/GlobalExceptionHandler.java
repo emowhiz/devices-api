@@ -3,6 +3,7 @@ package com.example.devices.controller;
 import com.example.devices.model.ApiErrorResponse;
 import com.example.devices.model.ErrorCode;
 import com.example.devices.service.DeviceInUseException;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 
 @RestControllerAdvice
 @Slf4j
+@Hidden
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
