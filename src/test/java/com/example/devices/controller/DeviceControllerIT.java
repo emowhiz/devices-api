@@ -1,9 +1,6 @@
 package com.example.devices.controller;
 
-import com.example.devices.model.CreateDeviceRequest;
-import com.example.devices.model.Device;
-import com.example.devices.model.DeviceState;
-import com.example.devices.model.UpdateDeviceRequest;
+import com.example.devices.model.*;
 import com.example.devices.repository.DeviceEntity;
 import com.example.devices.repository.DeviceRepository;
 import org.junit.jupiter.api.*;
@@ -28,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
-class DeviceControllerTest {
+class DeviceControllerIT {
 
 
     @Autowired
@@ -184,13 +181,16 @@ class DeviceControllerTest {
         var response = restTemplate.exchange("/v1/devices",
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<Device>>() {
-                });
+                DevicePage.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         var responseBody = response.getBody();
         assertNotNull(responseBody);
-        assertEquals(2, responseBody.size());
+        assertEquals(2, responseBody.getCount());
+        assertEquals(2, responseBody.getItems().size());
+        assertEquals(2, responseBody.getTotalCount());
+        assertEquals(1, responseBody.getTotalPages());
+        assertEquals(0, responseBody.getPageNumber());
     }
 
     @Test
@@ -212,13 +212,16 @@ class DeviceControllerTest {
         var response = restTemplate.exchange("/v1/devices/brand/" + device1.getBrand(),
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<Device>>() {
-                });
+                DevicePage.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         var responseBody = response.getBody();
         assertNotNull(responseBody);
-        assertEquals(1, responseBody.size());
+        assertEquals(1, responseBody.getCount());
+        assertEquals(1, responseBody.getItems().size());
+        assertEquals(1, responseBody.getTotalCount());
+        assertEquals(1, responseBody.getTotalPages());
+        assertEquals(0, responseBody.getPageNumber());
     }
 
     @Test
@@ -240,13 +243,16 @@ class DeviceControllerTest {
         var response = restTemplate.exchange("/v1/devices/state/" + device1.getState(),
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<Device>>() {
-                });
+                DevicePage.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         var responseBody = response.getBody();
         assertNotNull(responseBody);
-        assertEquals(1, responseBody.size());
+        assertEquals(1, responseBody.getCount());
+        assertEquals(1, responseBody.getItems().size());
+        assertEquals(1, responseBody.getTotalCount());
+        assertEquals(1, responseBody.getTotalPages());
+        assertEquals(0, responseBody.getPageNumber());
     }
 
 

@@ -1,14 +1,14 @@
 package com.example.devices.model;
 
 
-import jakarta.annotation.Nonnull;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
 public class UpdateDeviceRequest {
-    @Nonnull
+    @NotNull
     private Long id;
     private String name;
     private String brand;

@@ -1,12 +1,15 @@
 package com.example.devices.service;
 
 import com.example.devices.model.Device;
+import com.example.devices.model.DevicePage;
 import com.example.devices.model.DeviceState;
 import com.example.devices.repository.DeviceEntity;
 import com.example.devices.repository.DeviceRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,19 +50,20 @@ public class DeviceManagementService {
         var foundEntity = deviceRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Device not found"));
         return modelMapper.map(foundEntity, Device.class);
     }
-    public List<Device> fetchAllDevices() {
-        var existingEntities = deviceRepository.findAll();
-        return existingEntities.stream().map(e -> modelMapper.map(e, Device.class)).toList();
+
+    public DevicePage fetchAllDevices(int page, int size) {
+        var existingPage = deviceRepository.findAll(PageRequest.of(page, size));
+        return getDevicePage(existingPage);
     }
 
-    public List<Device> fetchAllDevicesByBrand(String brand) {
-        var existingEntities = deviceRepository.findAllByBrand(brand);
-        return existingEntities.stream().map(e -> modelMapper.map(e, Device.class)).toList();
+    public DevicePage fetchAllDevicesByBrand(String brand, int page, int size) {
+        var existingPage = deviceRepository.findAllByBrand(brand, PageRequest.of(page,size));
+        return getDevicePage(existingPage);
     }
 
-    public List<Device> fetchAllDevicesByState(DeviceState state) {
-        var existingEntities = deviceRepository.findAllByState(state);
-        return existingEntities.stream().map(e -> modelMapper.map(e, Device.class)).toList();
+    public DevicePage fetchAllDevicesByState(DeviceState state, int page, int size) {
+        var existingPage = deviceRepository.findAllByState(state, PageRequest.of(page, size));
+        return getDevicePage(existingPage);
     }
 
     public void deleteDevice(Long id) {
@@ -68,5 +72,17 @@ public class DeviceManagementService {
             deviceRepository.deleteById(id);
         }
         //To do throw custom exception?
+    }
+
+    private DevicePage getDevicePage(Page<DeviceEntity> existingPage) {
+        return DevicePage.builder()
+                .items(existingPage.stream()
+                        .map(e -> modelMapper.map(e, Device.class))
+                        .toList())
+                .count(existingPage.getNumberOfElements())
+                .totalPages(existingPage.getTotalPages())
+                .totalCount(existingPage.getTotalElements())
+                .pageNumber(existingPage.getNumber())
+                .build();
     }
 }
